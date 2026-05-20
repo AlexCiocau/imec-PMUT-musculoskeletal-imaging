@@ -15,10 +15,12 @@ This repository contains the code developed as part of our master's thesis at KU
 ## Repository Structure
 
 ```
-├── [pressure_characteristics/]       # [compute pressure profile]
-├── [python_graphs/]                  # [plot figures]
-├── [reconstruction_scripts/]         # [reconstruct B-mode images]
-└── [volumetric_simulation/]          # [sim for prototyping geometries]
+├── pressure_characteristics/         # compute acoustic pressure from hydrophone data
+├── python_graphs/                    # generate publication figures
+├── reconstruction_scripts/           # reconstruct B-mode images from RF data
+├── miscellaneous/                    # standalone analysis scripts
+└── volumetric_simulation/            # simulate and compare PMUT array geometries
+    └── auxilliary_sim_files/         # helper scripts for beam visualisation
 ```
 
 ## Requirements
@@ -92,7 +94,19 @@ Update the input file path at the top of each script to point to the appropriate
 ---
 
 ### volumetric_simulation/
-- **`ChipMUT_3Dsim.m`** — self-contained Huygens–Fresnel 3D simulation of a 2D PMUT array. No external data required; run directly in MATLAB. Array geometry and acoustic parameters are configured via variables at the top of the script.
+All simulation scripts are self-contained — no measured data files required.
+
+- **`ChipMUT_3Dsim.m`** — Huygens–Fresnel 3D simulation of the current PMUT chip. Renders a 3D scatter plot of the intensity volume and 2D axial slices (XZ / YZ) with on-axis depth profiles. Array geometry and acoustic parameters are configured via variables at the top of the script.
+
+- **`pmut_geometry_sweep.m`** — parametric sweep across alternative array geometries. Computes focal metrics (peak depth, FWHM, focal gain, depth of field) for each configuration and prints a comparison table. Optionally loads `alpha_cal.mat` for absolute pressure prediction (set `USE_MEASURED_CALIBRATION = true`). Requires the helper functions `pmut_metrics.m` and `pressure_budget.m` to be on the MATLAB path.
+
+- **`pmut_geometry_sweep_optimized.m`** — extends the geometry sweep by steering the electronic focus across a range of depths (10–40 mm) for each configuration. Produces capability curves (intensity at intended focus vs. depth), snapshot comparisons at a fixed steered depth, and a summary table of best/worst performance per geometry.
+
+#### auxilliary_sim_files/
+
+- **`beam_hourglass_visualizer.m`** — 2D elevational beam analysis for multiple cell-layout configurations (`equal`, `parabolic`, `grouped`, `chirp`, `hybrid`, `multifocal_hybrid`). Plots the hourglass beam map, on-axis intensity, elevational FWHM vs. depth, and an intensity–resolution tradeoff scatter. Useful for comparing Fresnel-zone layout strategies.
+
+- **`pmut_beam_3d_holistic.m`** — 3D volumetric field renderer for `equal`, `parabolic`, and `grouped` layouts. Produces orthogonal slice planes through the focal point and nested isosurfaces at –3, –6, and –12 dB to visualise the full 3D beam shape.
 
 ---
 
